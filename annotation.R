@@ -16,7 +16,7 @@ setwd("/archive/alotaibih/sehribanb/mouse_normal/d1/input/")
 bams <- list.files(pattern = ".bam", full.names = TRUE)
 
 counts <- featureCounts(files = bams,
-                          annot.ext = "/archive/alotaibih/sehribanb/new_mouse/tgf_beta/CustomizedGTF_NT_gencode.vM23.annotation.gtf", 
+                          annot.ext = "/archive/alotaibih/sehribanb/new_mouse/tgf_beta/gtf", 
                           isGTFAnnotationFile=TRUE,
                           GTF.featureType= c("exon"),
                           GTF.attrType="gene_id",
