@@ -9,14 +9,14 @@ library(dplyr)
 library(data.table)
 
 # Set working directory
-setwd("/archive/alotaibih/sehribanb/new_mouse/d102/input/")
+setwd("/input/")
 
 # Get file paths for BAM files in directories
 bams_S <- list.files(path = ".", pattern = ".bam", full.names = TRUE)
 
 # Run featureCounts for single-end data
 counts_S <- featureCounts(files = bams_S,
-                          annot.ext = "/archive/alotaibih/sehribanb/new_mouse/tgf_beta/CustomizedGTF_NT_gencode.vM23.annotation.gtf", 
+                          annot.ext = "/archive/mouse_gtf", 
                           isGTFAnnotationFile = TRUE,
                           GTF.featureType = "exon",
                           GTF.attrType = "gene_id",
@@ -34,7 +34,7 @@ counts_S_df_C$GeneID <- row.names(counts_S_df_C)
 counts_S_df_C_A <- merge(counts_S_df_A, counts_S_df_C, by = "GeneID")
 
 # Import annotation file
-gtf <- rtracklayer::import("/archive/alotaibih/sehribanb/new_mouse/tgf_beta/CustomizedGTF_NT_gencode.vM23.annotation.gtf")
+gtf <- rtracklayer::import("/archive/mouse_gtf")
 gtf_data_frame <- as.data.frame(gtf)
 
 # Filter annotation data
@@ -48,7 +48,7 @@ counts_S_df_C_A$gene_id <- row.names(counts_S_df_C_A)
 counts_df_annotated <- merge(gtf_filtered_uniq, counts_S_df_C_A, by = "gene_id")
 
 # Write annotated counts to file
-write.table(counts_df_annotated, "/archive/alotaibih/sehribanb/new_mouse/d102/counts_df_annotated.tsv", quote = FALSE, col.names = TRUE, sep = "\t")
+write.table(counts_df_annotated, "counts_df_annotated.tsv", quote = FALSE, col.names = TRUE, sep = "\t")
 
 # Calculate FPKM values
 z <- DGEList(counts = counts_S$counts, genes = counts_S_df_C_A[, c("GeneID", "Length")])
@@ -60,4 +60,4 @@ FPKM <- fp %>% select(gene_id, everything())
 FPKM_annotated <- merge(FPKM, gtf_filtered_uniq, by = "gene_id")
 
 # Write FPKM values to file
-write.table(FPKM_annotated, "/archive/alotaibih/sehribanb/new_mouse/d102/fpkm_annotated.tsv", quote = FALSE, col.names = TRUE, sep = "\t")
+write.table(FPKM_annotated, "pkm_annotated.tsv", quote = FALSE, col.names = TRUE, sep = "\t")
